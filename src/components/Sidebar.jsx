@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { useEffect, useState } from "react";
 // import useAuthUser from "../hooks/useAuthUser";
 import { api } from "../service/api";
+import toast from "react-hot-toast";
 
 //  import {  ChevronDownIcon } from "@heroicons/react/24/solid";
 import {
@@ -67,6 +68,7 @@ const Sidebar = ({ onGroupClick }) => {
         //       ownedGroups:true,
         //       memberships: true,
         //       messages: true,
+  toast.success("User added successfully");
 
         const [user, orga, member, org, groupRes] = await Promise.all([
           api.post("http://localhost:3000/api/auth/userById", {

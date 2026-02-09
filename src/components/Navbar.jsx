@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 // import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 
 
@@ -65,6 +66,7 @@ const Navbar = () => {
       // optional: refresh authUser
       if (log.data.success) {   
       window.location.href = "/login"; // redirect to login
+      toast(log.data.message)
 
         localStorage.removeItem("token");
         localStorage.removeItem("user");

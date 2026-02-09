@@ -105,6 +105,8 @@ const Sidebar = ({ onGroupClick }) => {
       userId: parsedUser?.id || null,
       name: orgName,
     });
+  toast.success(res.data.message);
+
     setOrgName("");
     setShowOrgModal(false);
   };

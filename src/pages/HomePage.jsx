@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { UsersIcon, ShipWheelIcon } from "lucide-react";
  import AddUserModal from "../components/AddUserModal";
+import toast from "react-hot-toast";
 
 import { useSocket } from "../hooks/useSocket";
 import { useMessages } from "../hooks/useMessages";
@@ -81,12 +82,13 @@ const HomePage = ({ groupi, userId }) => {
   const handleSend = async () => {
     if (!input.trim()) return;
      sendMessage(input);
-    await axios.post("http://localhost:3000/api/groups/sendMessage", {
+    let res = await axios.post("http://localhost:3000/api/groups/sendMessage", {
       senderId: parsedUser.id,
       groupId: groupi?.id || null,
       text: input,
     });
     setInput("");
+    toast(res.data.message)
   };
    const [addData, setAddData] = useState({
     fullName: "",
@@ -110,10 +112,12 @@ const HomePage = ({ groupi, userId }) => {
   const handleAddUser = async (e) => {
     e.preventDefault();
      try {
-      await axios.post("http://localhost:3000/api/auth/addUser", {
+      let res = await axios.post("http://localhost:3000/api/auth/addUser", {
         addData,
       });
+
       setIsModalOpen(false);
+      toast(res.data.message)
 
      } catch (err) {
       console.error("Error adding user to group:", err);

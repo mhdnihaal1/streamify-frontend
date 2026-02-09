@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
  import Layout from "./components/Layout.jsx";
+ import toast from "react-hot-toast";
 
 import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
@@ -29,7 +30,7 @@ const App = () => {
        const res = await axios.post("http://localhost:3000/api/auth/orgUser", { orgId: parsedUser?.orgId || null } )
         let filter = res?.data?.org[0]?.groups.filter((val)=> val.id ==groupId )
        setSelectedGroup(filter[0]);  
- 
+      toast(res.data.message)
     } catch (err) {
       console.error("Error fetching group:", err);
     }

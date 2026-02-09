@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-"build": "npx vite build"
+"build": "npx vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -40,6 +40,6 @@
     "vite": "^5.4.21"
   },
   "engines": {
-    "node": "24.x"
+  "node": ">=18"
   }
 }

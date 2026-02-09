@@ -24,7 +24,7 @@ const SignUpPage = () => {
 console.log("Signup ", signupData);
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/auth/register", signupData );
+        "https://streamify-backend-9m71.onrender.com/api/auth/register", signupData );
  
       console.log("Signup success:", res);
 if(res.status === 200){

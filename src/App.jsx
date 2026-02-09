@@ -27,7 +27,7 @@ const App = () => {
 
   const handleGroupClick = async (groupId) => {
     try {
-       const res = await axios.post("http://localhost:3000/api/auth/orgUser", { orgId: parsedUser?.orgId || null } )
+       const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/auth/orgUser", { orgId: parsedUser?.orgId || null } )
         let filter = res?.data?.org[0]?.groups.filter((val)=> val.id ==groupId )
        setSelectedGroup(filter[0]);  
       toast(res.data.message)

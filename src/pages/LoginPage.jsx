@@ -37,7 +37,7 @@ const LoginPage = () => {
 // }; 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const res = await axios.post("http://localhost:3000/api/auth/login", loginData, { withCredentials: true });
+    const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/auth/login", loginData, { withCredentials: true });
 
     if (res.data.Success) {
       window.location.href = "/"; // redirect to home page

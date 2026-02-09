@@ -40,20 +40,20 @@ const HomePage = ({ groupi, userId }) => {
 
         const [user, msgRes, org, groupRes, organizaito, res] =
           await Promise.all([
-            api.post("http://localhost:3000/api/auth/userById", {
+            api.post("https://streamify-backend-9m71.onrender.com/api/auth/userById", {
               userId: parsedUser?.id || null,
             }),
-            api.post("http://localhost:3000/api/groups/messages", {
+            api.post("https://streamify-backend-9m71.onrender.com/api/groups/messages", {
               groupId: groupi?.id,
               userId: parsedUser.id,
             }),
-            api.post("http://localhost:3000/api/auth/orgUser", {
+            api.post("https://streamify-backend-9m71.onrender.com/api/auth/orgUser", {
               orgId: parsedUser?.orgId || null,
             }),
-            api.post("http://localhost:3000/api/groups/group", {
+            api.post("https://streamify-backend-9m71.onrender.com/api/groups/group", {
               groupId: groupi?.id || null,
             }),
-            api.get("http://localhost:3000/api/groups/organization"),
+            api.get("https://streamify-backend-9m71.onrender.com/api/groups/organization"),
             // api.post("http://localhost:3000/api/groups/removeUsers", {   groupId: groupi?.id,userId:parsedUser.id,orgId:parsedUser.orgId || null}),
           ]);
 
@@ -82,7 +82,7 @@ const HomePage = ({ groupi, userId }) => {
   const handleSend = async () => {
     if (!input.trim()) return;
      sendMessage(input);
-    let res = await axios.post("http://localhost:3000/api/groups/sendMessage", {
+    let res = await axios.post("https://streamify-backend-9m71.onrender.com/api/groups/sendMessage", {
       senderId: parsedUser.id,
       groupId: groupi?.id || null,
       text: input,
@@ -112,7 +112,7 @@ const HomePage = ({ groupi, userId }) => {
   const handleAddUser = async (e) => {
     e.preventDefault();
      try {
-      let res = await axios.post("http://localhost:3000/api/auth/addUser", {
+      let res = await axios.post("https://streamify-backend-9m71.onrender.com/api/auth/addUser", {
         addData,
       });
 

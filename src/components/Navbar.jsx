@@ -41,7 +41,7 @@ const Navbar = () => {
           console.log(12345555, parsedUser)
    
           const [res] = await Promise.all([ 
-                    api.post("http://localhost:3000/api/auth/userById", { orgId: parsedUser?.id || null } )
+                    api.post("https://streamify-backend-9m71.onrender.com/api/auth/userById", { orgId: parsedUser?.id || null } )
                    ]);
  
            setUsers(res.data); 
@@ -62,7 +62,7 @@ const Navbar = () => {
 
   const logout = async () => {
     try {
-     let log = await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
+     let log = await axios.post("https://streamify-backend-9m71.onrender.com/api/auth/logout", {}, { withCredentials: true });
       // optional: refresh authUser
       if (log.data.success) {   
       window.location.href = "/login"; // redirect to login

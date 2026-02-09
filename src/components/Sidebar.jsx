@@ -71,19 +71,19 @@ const Sidebar = ({ onGroupClick }) => {
   toast.success("User added successfully");
 
         const [user, orga, member, org, groupRes] = await Promise.all([
-          api.post("http://localhost:3000/api/auth/userById", {
+          api.post("https://streamify-backend-9m71.onrender.com/api/auth/userById", {
             userId: parsedUser?.id || null,
           }),
-          api.post("http://localhost:3000/api/groups/organizationById", {
+          api.post("https://streamify-backend-9m71.onrender.com/api/groups/organizationById", {
             orgId: parsedUser?.orgId || null,
           }),
-          api.post("http://localhost:3000/api/groups/groupMember", {
+          api.post("https://streamify-backend-9m71.onrender.com/api/groups/groupMember", {
             userId: parsedUser?.id || null,
           }),
-          api.post("http://localhost:3000/api/auth/orgUser", {
+          api.post("https://streamify-backend-9m71.onrender.com/api/auth/orgUser", {
             orgId: parsedUser?.orgId || null,
           }),
-          api.post("http://localhost:3000/api/groups/groups", {
+          api.post("https://streamify-backend-9m71.onrender.com/api/groups/groups", {
             userId: parsedUser.id,
           }),
         ]);
@@ -101,7 +101,7 @@ const Sidebar = ({ onGroupClick }) => {
   }, []);
 
   const handleCreateOrg = async () => {
-    const res = await axios.post("http://localhost:3000/api/groups/createOrg", {
+    const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/groups/createOrg", {
       userId: parsedUser?.id || null,
       name: orgName,
     });
@@ -112,7 +112,7 @@ const Sidebar = ({ onGroupClick }) => {
   };
 
   const handleCreateGroup = async () => {
-    const res = await axios.post("http://localhost:3000/api/groups/createGrp", {
+    const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/groups/createGrp", {
       userId: parsedUser?.id || null,
       name: groupName,
       orgId: userProfile?.org?.id || null,
@@ -129,7 +129,7 @@ const Sidebar = ({ onGroupClick }) => {
   const handleAddMember = async ({ userId, groupId }) => {
     // return
     let res = await axios.post(
-      "http://localhost:3000/api/groups/addGrp-members",
+      "https://streamify-backend-9m71.onrender.com/api/groups/addGrp-members",
       { userId, groupId },
     );
     setSelectedUserId(null);

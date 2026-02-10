@@ -11,8 +11,7 @@ import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import { useThemeStore } from "./store/useThemeStore.js";
-import axios from "axios";
-
+import { api } from "./service/api.js"
 const App = () => {
   const { isLoading, user: authUser } = useAuthUser(); // renamed for clarity
   const { theme } = useThemeStore();
@@ -27,7 +26,7 @@ const App = () => {
 
   const handleGroupClick = async (groupId) => {
     try {
-       const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/auth/orgUser", { orgId: parsedUser?.orgId || null } )
+       const res = await api.post("/auth/orgUser", { orgId: parsedUser?.orgId || null } )
         let filter = res?.data?.org[0]?.groups.filter((val)=> val.id ==groupId )
        setSelectedGroup(filter[0]);  
       toast(res.data.message)

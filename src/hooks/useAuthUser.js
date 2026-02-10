@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/auth/me";
+const API_URL = "https://streamify-backend-9m71.onrender.com/api/auth/me";
 
 const useAuthUser = () => {
   const [user, setUser] = useState(null);

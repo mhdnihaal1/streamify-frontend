@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
-import axios from "axios";
- import { Link, useNavigate } from "react-router"; 
-
+  import { Link, useNavigate } from "react-router"; 
+import {api } from "../service/api"
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -23,14 +22,12 @@ const SignUpPage = () => {
     setError(null);
 console.log("Signup ", signupData);
     try {
-      const res = await axios.post(
-        "https://streamify-backend-9m71.onrender.com/api/auth/register", signupData );
+      const res = await api.post("/auth/register", signupData );
  
-      console.log("Signup success:", res);
-if(res.status === 200){
+ if(res.status === 200){
        navigate("/login");
 }else{
-  alert(res.data.message || "Signup failed");
+  // alert(res.data.message || "Signup failed");
   setError(res.data.message || "Signup failed");
 }
     } catch (err) {

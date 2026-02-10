@@ -6,27 +6,22 @@ import toast from "react-hot-toast";
 import { useSocket } from "../hooks/useSocket";
 import { useMessages } from "../hooks/useMessages";
 import { api } from "../service/api";
-import axios from "axios";
-
+ 
 const HomePage = ({ groupi, userId }) => {
   const [input, setInput] = useState("");
   const [showMembers, setShowMembers] = useState(false);
-  // const [group, setGroup] = useState([]);
-  const [message, setMessage] = useState([]);
-  // const [userProfile, setUsers] = useState([]);
-  // const [organization, setOrganization] = useState([]);
-  // const [res, setRes] = useState([]);
-
+   const [message, setMessage] = useState([]);
+ 
+console.log(message)
   const [open, setOpen] = useState(false);
 
-  // const [members, setMembers] = useState([]);
-  const user = localStorage.getItem("user");
+   const user = localStorage.getItem("user");
   const parsedUser = JSON.parse(user);
-  // console.log("user :",parsedUser)
-  const messagesEndRef = useRef(null);
+   const messagesEndRef = useRef(null);
   const socket = useSocket(parsedUser.id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [organizations, setOrganizations] = useState([]);
+  const [ress, setRess] = useState([]);
 
   const { messages, setMessages, sendMessage } = useMessages(
     socket,
@@ -36,34 +31,37 @@ const HomePage = ({ groupi, userId }) => {
   useEffect(() => {
     const fetchOrgs = async () => {
       try {
-        // if (!groupi?.id) return;
-
+ console.log(1,groupi)
         const [user, msgRes, org, groupRes, organizaito, res] =
           await Promise.all([
-            api.post("https://streamify-backend-9m71.onrender.com/api/auth/userById", {
+            api.post("/auth/userById", {
               userId: parsedUser?.id || null,
             }),
-            api.post("https://streamify-backend-9m71.onrender.com/api/groups/messages", {
+            api.post("/groups/messages", {
               groupId: groupi?.id,
               userId: parsedUser.id,
             }),
-            api.post("https://streamify-backend-9m71.onrender.com/api/auth/orgUser", {
+            api.post("/auth/orgUser", {
               orgId: parsedUser?.orgId || null,
             }),
-            api.post("https://streamify-backend-9m71.onrender.com/api/groups/group", {
+            api.post("/groups/group", {
               groupId: groupi?.id || null,
             }),
-            api.get("https://streamify-backend-9m71.onrender.com/api/groups/organization"),
+           api.get("/groups/organization"),
+           api.post("/groups/groupById",{
+              groupId: groupi?.id || null,
+            }),
             // api.post("http://localhost:3000/api/groups/removeUsers", {   groupId: groupi?.id,userId:parsedUser.id,orgId:parsedUser.orgId || null}),
           ]);
-
+console.log(user, msgRes, org, groupRes, organizaito, res)
          setMessage(msgRes.data.data || []);
         setMessages(msgRes.data.data || []);
         if (org.data.org) setOrganizations(org.data.org || []);
         // if (groupRes.data.data) setGroup(groupRes.data.data);
         // setOrganization(organizaito.data.data);
-        // setRes(res.data.data);
-
+        setRess(res.data.data);
+        console.log(12,res.data.data)
+       
         // console.log("member", memberRes.data.data)
         // setMembers(memberRes.data.data || []);
       } catch (err) {
@@ -82,7 +80,7 @@ const HomePage = ({ groupi, userId }) => {
   const handleSend = async () => {
     if (!input.trim()) return;
      sendMessage(input);
-    let res = await axios.post("https://streamify-backend-9m71.onrender.com/api/groups/sendMessage", {
+    let res = await api.post("/groups/sendMessage", {
       senderId: parsedUser.id,
       groupId: groupi?.id || null,
       text: input,
@@ -112,19 +110,32 @@ const HomePage = ({ groupi, userId }) => {
   const handleAddUser = async (e) => {
     e.preventDefault();
      try {
-      let res = await axios.post("https://streamify-backend-9m71.onrender.com/api/auth/addUser", {
+      let res = await api.post("/auth/addUser", {
         addData,
       });
 
       setIsModalOpen(false);
       toast(res.data.message)
-
+ 
      } catch (err) {
       console.error("Error adding user to group:", err);
     }
   };
 
  
+  const handleRemoveUser = async (memberId) => {
+  try {
+    const res = await api.post("/groups/removeMember", {
+      memberId  
+    });
+
+    toast(res.data.message);
+  } catch (err) {
+    console.error("Error removing user from group:", err);
+    toast.error("Failed to remove user");
+  }
+};
+
 
   // Show placeholder when no group is selected
   if (!groupi?.id) {
@@ -221,11 +232,11 @@ const HomePage = ({ groupi, userId }) => {
               )}
             </div>
             <span className="block px-4 py-2 text-sm text-gray-600">
-              {organizations[0]?.users
-                ?.filter((user) => user.role === "ADMIN")
+              {ress?.members
+                ?.filter((user) => user.user.role === "ADMIN")
                 .map((user) => (
-                  <div key={user.id} className="px-4 py-3 border-b">
-                    <p className="font-small text-black">{user.name}</p>
+                  <div key={user/user.id} className="px-4 py-3 border-b">
+                    <p className="font-small text-black">{user.user.name}</p>
                     {/* <span className="text-xs text-gray-400">{user.role}</span> */}
                   </div>
                 ))}
@@ -235,13 +246,20 @@ const HomePage = ({ groupi, userId }) => {
               Members
             </div>
 
-            {organizations[0]?.users
-              ?.filter((user) => user.role === "MEMBER")
+            {ress?.members
+              ?.filter((user) => user.user.role === "MEMBER")
               .map((user) => (
-                <div key={user.id} className="px-4 py-3 border-b">
-                  <p className="font-small text-black">{user.name}</p>
-                  {/* <span className="text-xs text-gray-400">{user.role}</span> */}
-                </div>
+                <div key={user.user.id} className="px-4 py-3 border-b">
+                  <p className="font-small text-black">{user.user.name}</p>
+                  <button
+  onClick={() => handleRemoveUser(user.id)}
+  className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+>
+  Remove
+</button>
+
+                 </div>
+                 
               ))}
           </div>
         )}

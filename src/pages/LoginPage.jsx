@@ -1,50 +1,23 @@
 import { useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
  import { Link } from "react-router"; 
- import { Toaster } from "react-hot-toast";
-import axios from "axios";
-
+ import toast from "react-hot-toast";
+ import {api } from "../service/api"
+ 
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-  // const navigate = useNavigate();
-
- 
- 
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-//  try {
-//     const res = await axios.post(
-//       "http://localhost:3000/api/auth/login",
-//       loginData
-//     );
-//      if (res.data.Success) {
-//       navigate("/"); // ✅ This works only inside a component
-//     }
-// console.log(123)
-//     console.log("Login success:", res.data.Success);
-
-//      localStorage.setItem("token", res.data.token);
-
-//      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-//   } catch (err) {
-//     console.error("Login failed:", err.response?.data || err.message);
-//     alert(err.response?.data?.message || "Login failed");
-//   }
-// }; 
+  
   const handleLogin = async (e) => {
     e.preventDefault();
-    const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/auth/login", loginData, { withCredentials: true });
+    const res = await api.post("/auth/login", loginData );
 
     if (res.data.Success) {
-      window.location.href = "/"; // redirect to home page
+      window.location.href = "/";  
     }
-    console.log(123)
-    console.log("Login success:", res.data.Success);
-
+  toast(res.data.message)
      localStorage.setItem("token", res.data.token);
 
      localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -110,7 +83,7 @@ const LoginPage = () => {
 
                   <button type="submit" className="btn btn-primary w-full"  >
                     
-                      "Sign In"
+                      Sign In
                     
                   </button>
 

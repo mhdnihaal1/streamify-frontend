@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 // import useAuthUser from "../hooks/useAuthUser";
 import { api } from "../service/api";
 import toast from "react-hot-toast";
-
+ 
 //  import {  ChevronDownIcon } from "@heroicons/react/24/solid";
 import {
   BellIcon,
@@ -14,80 +14,54 @@ import {
   ShieldCheckIcon,
 } from "lucide-react";
 
-import axios from "axios";
-
+ 
 const Sidebar = ({ onGroupClick }) => {
   const [showOrgModal, setShowOrgModal] = useState(false);
-  const [showGroupModal, setShowGroupModal] = useState(false);
-  // const [showAddMembertoOrgModal, setShowAddMembertoOrgModal] = useState(false);
-  // const [showAddMembertogrpModal, setShowAddMembertogrpModal] = useState(false);
-  const [userProfile, setUsers] = useState([]);
-  // const [showAddMemberModal, setShowAddMemberModal] = useState(false);
-  // const [selectedUserId, setSelectedUserId] = useState(null);
-  // const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [showGroupModal, setShowGroupModal] = useState(false); 
+  const [userProfile, setUsers] = useState([]); 
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
-
-  // selected = { type: "USER" | "GROUP", data: {...} }
-  // const [groups, setGroup] = useState([]);
+ 
   const user = localStorage.getItem("user");
 
   const parsedUser = JSON.parse(user);
   const [orgName, setOrgName] = useState("");
-  const [groupName, setGroupName] = useState("");
-  //  const [open, setOpen] = useState(false);
-
-  // const { authUser } = useAuthUser();
-  // const location = useLocation();
-  // const currentPath = location.pathname;
+  const [groupName, setGroupName] = useState(""); 
   const [organizations, setOrganizations] = useState([]);
   const [groupss, setGroup] = useState([]);
 
-  const [orga, setOrga] = useState([]);
-
-  // console.log(123, parsedUser)
-  // const [selectedOrg, setSelectedOrg] = useState(null);
-  // const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [orga, setOrga] = useState([]); 
   const [activeGroupId, setActiveGroupId] = useState(null);
-  // const [selectedUserIds, setSelectedUserIds] = useState([]);
-
+ 
   useEffect(() => {
     const fetchOrgs = async () => {
       const token = localStorage.getItem("token");
 
       if (!token) return;
       try {
-        console.log(
-          "123455551111111111",
-          parsedUser.id,
-          organizations,
-          parsedUser?.orgId,
-        );
-        //       org: true,
-        //       ownedGroups:true,
-        //       memberships: true,
-        //       messages: true,
+        
+      
   toast.success("User added successfully");
 
         const [user, orga, member, org, groupRes] = await Promise.all([
-          api.post("https://streamify-backend-9m71.onrender.com/api/auth/userById", {
+          api.post("/auth/userById", {
             userId: parsedUser?.id || null,
           }),
-          api.post("https://streamify-backend-9m71.onrender.com/api/groups/organizationById", {
+          api.post("/groups/organizationById", {
             orgId: parsedUser?.orgId || null,
           }),
-          api.post("https://streamify-backend-9m71.onrender.com/api/groups/groupMember", {
+          api.post("/groups/groupMember", {
             userId: parsedUser?.id || null,
           }),
-          api.post("https://streamify-backend-9m71.onrender.com/api/auth/orgUser", {
+          api.post("/auth/orgUser", {
             orgId: parsedUser?.orgId || null,
           }),
-          api.post("https://streamify-backend-9m71.onrender.com/api/groups/groups", {
+          api.post("/groups/groups", {
             userId: parsedUser.id,
           }),
         ]);
-
+console.log(member)
         setUsers(user.data);
         setOrga(orga.data.data);
         setOrganizations(org.data.org || []);
@@ -101,7 +75,7 @@ const Sidebar = ({ onGroupClick }) => {
   }, []);
 
   const handleCreateOrg = async () => {
-    const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/groups/createOrg", {
+    const res = await api.post("/groups/createOrg", {
       userId: parsedUser?.id || null,
       name: orgName,
     });
@@ -112,13 +86,15 @@ const Sidebar = ({ onGroupClick }) => {
   };
 
   const handleCreateGroup = async () => {
-    const res = await axios.post("https://streamify-backend-9m71.onrender.com/api/groups/createGrp", {
+    const res = await api.post("/groups/createGrp", {
       userId: parsedUser?.id || null,
       name: groupName,
       orgId: userProfile?.org?.id || null,
     });
     setGroupName("");
     setShowGroupModal(false);
+  toast.success(res.data.message);
+
   };
 
   const handleGroupClick = (group) => {
@@ -128,12 +104,13 @@ const Sidebar = ({ onGroupClick }) => {
 
   const handleAddMember = async ({ userId, groupId }) => {
     // return
-    let res = await axios.post(
-      "https://streamify-backend-9m71.onrender.com/api/groups/addGrp-members",
+    let res = await api.post("/groups/addGrp-members",
       { userId, groupId },
     );
     setSelectedUserId(null);
     setSelectedGroupId(null);
+  toast.success(res.data.message);
+
   };
 
   return (

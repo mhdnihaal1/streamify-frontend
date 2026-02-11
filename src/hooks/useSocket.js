@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "https://streamify-backend-9m71.onrender.com";
+const SOCKET_URL = "http://localhost:3000";
 
 export const useSocket = (userId) => {
   const [socket, setSocket] = useState(null);
@@ -10,8 +10,9 @@ export const useSocket = (userId) => {
     if (!userId) return;
 
     const socketInstance = io(SOCKET_URL, {
+          withCredentials: true,
       auth: {
-        userId, // required by backend middleware
+        userId,  
       }
     });
 

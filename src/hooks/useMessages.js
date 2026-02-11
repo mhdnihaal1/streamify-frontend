@@ -1,4 +1,4 @@
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
 
 export const useMessages = (socket, groupId) => {
   const [messages, setMessages] = useState([]);
@@ -29,7 +29,7 @@ export const useMessages = (socket, groupId) => {
 
   return {
     messages,
-    setMessages,   // ✅ ADD THIS
+    setMessages,  
     sendMessage,
   };
 };

@@ -1,26 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { UsersIcon, ShipWheelIcon } from "lucide-react";
- import AddUserModal from "../components/AddUserModal";
+import AddUserModal from "../components/AddUserModal";
 import toast from "react-hot-toast";
 
 import { useSocket } from "../hooks/useSocket";
 import { useMessages } from "../hooks/useMessages";
 import { api } from "../service/api";
- 
+
 const HomePage = ({ groupi, userId }) => {
   const [input, setInput] = useState("");
   const [showMembers, setShowMembers] = useState(false);
-   const [message, setMessage] = useState([]);
- 
-console.log(message)
+
   const [open, setOpen] = useState(false);
 
-   const user = localStorage.getItem("user");
+  const user = localStorage.getItem("user");
   const parsedUser = JSON.parse(user);
-   const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef(null);
   const socket = useSocket(parsedUser.id);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [organizations, setOrganizations] = useState([]);
   const [ress, setRess] = useState([]);
 
   const { messages, setMessages, sendMessage } = useMessages(
@@ -31,39 +28,17 @@ console.log(message)
   useEffect(() => {
     const fetchOrgs = async () => {
       try {
- console.log(1,groupi)
-        const [user, msgRes, org, groupRes, organizaito, res] =
-          await Promise.all([
-            api.post("/auth/userById", {
-              userId: parsedUser?.id || null,
-            }),
-            api.post("/groups/messages", {
-              groupId: groupi?.id,
-              userId: parsedUser.id,
-            }),
-            api.post("/auth/orgUser", {
-              orgId: parsedUser?.orgId || null,
-            }),
-            api.post("/groups/group", {
-              groupId: groupi?.id || null,
-            }),
-           api.get("/groups/organization"),
-           api.post("/groups/groupById",{
-              groupId: groupi?.id || null,
-            }),
-            // api.post("http://localhost:3000/api/groups/removeUsers", {   groupId: groupi?.id,userId:parsedUser.id,orgId:parsedUser.orgId || null}),
-          ]);
-console.log(user, msgRes, org, groupRes, organizaito, res)
-         setMessage(msgRes.data.data || []);
+        const [msgRes, res] = await Promise.all([
+          api.post("/groups/messages", {
+            groupId: groupi?.id,
+            userId: parsedUser.id,
+          }),
+          api.post("/groups/groupById", {
+            groupId: groupi?.id || null,
+          }),
+        ]);
         setMessages(msgRes.data.data || []);
-        if (org.data.org) setOrganizations(org.data.org || []);
-        // if (groupRes.data.data) setGroup(groupRes.data.data);
-        // setOrganization(organizaito.data.data);
         setRess(res.data.data);
-        console.log(12,res.data.data)
-       
-        // console.log("member", memberRes.data.data)
-        // setMembers(memberRes.data.data || []);
       } catch (err) {
         console.error("Fetch error:", err);
       }
@@ -72,23 +47,26 @@ console.log(user, msgRes, org, groupRes, organizaito, res)
     fetchOrgs();
   }, [groupi?.id, parsedUser.id, setMessages, userId]);
 
-  // ⬇️ auto scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
-     sendMessage(input);
-    let res = await api.post("/groups/sendMessage", {
-      senderId: parsedUser.id,
-      groupId: groupi?.id || null,
-      text: input,
-    });
-    setInput("");
-    toast(res.data.message)
+    try {
+      if (!input.trim()) return;
+      sendMessage(input);
+      await api.post("/groups/sendMessage", {
+        senderId: parsedUser.id,
+        groupId: groupi?.id || null,
+        text: input,
+      });
+      setInput("");
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+      console.error("Error adding user to group:", err);
+    }
   };
-   const [addData, setAddData] = useState({
+  const [addData, setAddData] = useState({
     fullName: "",
     email: "",
     password: "",
@@ -109,35 +87,35 @@ console.log(user, msgRes, org, groupRes, organizaito, res)
 
   const handleAddUser = async (e) => {
     e.preventDefault();
-     try {
+    try {
       let res = await api.post("/auth/addUser", {
         addData,
       });
 
       setIsModalOpen(false);
-      toast(res.data.message)
- 
-     } catch (err) {
+      toast(res.data.message);
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
       console.error("Error adding user to group:", err);
     }
   };
 
- 
   const handleRemoveUser = async (memberId) => {
-  try {
-    const res = await api.post("/groups/removeMember", {
-      memberId  
-    });
+    try {
+      const res = await api.post("/groups/removeMember", {
+        memberId,
+      });
 
-    toast(res.data.message);
-  } catch (err) {
-    console.error("Error removing user from group:", err);
-    toast.error("Failed to remove user");
-  }
-};
+      toast(res.data.message);
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Error removing user from group:", err);
+      toast.error("Failed to remove user");
 
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
 
-  // Show placeholder when no group is selected
   if (!groupi?.id) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
@@ -235,7 +213,7 @@ console.log(user, msgRes, org, groupRes, organizaito, res)
               {ress?.members
                 ?.filter((user) => user.user.role === "ADMIN")
                 .map((user) => (
-                  <div key={user/user.id} className="px-4 py-3 border-b">
+                  <div key={user / user.id} className="px-4 py-3 border-b">
                     <p className="font-small text-black">{user.user.name}</p>
                     {/* <span className="text-xs text-gray-400">{user.role}</span> */}
                   </div>
@@ -252,14 +230,12 @@ console.log(user, msgRes, org, groupRes, organizaito, res)
                 <div key={user.user.id} className="px-4 py-3 border-b">
                   <p className="font-small text-black">{user.user.name}</p>
                   <button
-  onClick={() => handleRemoveUser(user.id)}
-  className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
->
-  Remove
-</button>
-
-                 </div>
-                 
+                    onClick={() => handleRemoveUser(user.id)}
+                    className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
               ))}
           </div>
         )}

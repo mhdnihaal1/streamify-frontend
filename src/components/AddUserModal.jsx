@@ -1,36 +1,38 @@
 import React from "react";
-import { UsersIcon,ShipWheelIcon } from "lucide-react";
+import { UsersIcon, ShipWheelIcon } from "lucide-react";
 
-const AddUserModal = ({ isOpen, onClose, addData, setAddData, handleAddUser }) => {
-  if (!isOpen) return null; // don't render if modal is closed
+const AddUserModal = ({
+  isOpen,
+  onClose,
+  addData,
+  setAddData,
+  handleAddUser,
+}) => {
+  if (!isOpen) return null;  
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-base-100 rounded-xl shadow-lg w-full max-w-md p-6 relative">
-        {/* Close Button */}
-        <button
+         <button
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
           onClick={onClose}
         >
           ✕
         </button>
 
-        {/* Logo */}
-        <div className="mb-4 flex items-center gap-2">
+         <div className="mb-4 flex items-center gap-2">
           <ShipWheelIcon className="size-7 text-primary" />
           <span className="text-2xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
             Streamify
           </span>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleAddUser} className="space-y-4">
+         <form onSubmit={handleAddUser} className="space-y-4">
           <div>
             <h2 className="text-xl font-semibold">Add New User</h2>
           </div>
 
-          {/* Full Name */}
-          <div className="form-control">
+           <div className="form-control">
             <label className="label">
               <span className="label-text">Full Name</span>
             </label>
@@ -46,8 +48,7 @@ const AddUserModal = ({ isOpen, onClose, addData, setAddData, handleAddUser }) =
             />
           </div>
 
-          {/* Email */}
-          <div className="form-control">
+           <div className="form-control">
             <label className="label">
               <span className="label-text">Email</span>
             </label>
@@ -63,8 +64,7 @@ const AddUserModal = ({ isOpen, onClose, addData, setAddData, handleAddUser }) =
             />
           </div>
 
-          {/* Role */}
-          <div className="form-control">
+           <div className="form-control">
             <label className="label">
               <span className="label-text">Role</span>
             </label>
@@ -90,8 +90,7 @@ const AddUserModal = ({ isOpen, onClose, addData, setAddData, handleAddUser }) =
             </div>
           </div>
 
-          {/* Password */}
-          <div className="form-control">
+           <div className="form-control">
             <label className="label">
               <span className="label-text">Password</span>
             </label>

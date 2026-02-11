@@ -1,102 +1,62 @@
 import { Link, useLocation } from "react-router";
- import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
+import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
 // import ThemeSelector from "./ThemeSelector";
- import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { api } from "../service/api";
 import {
-   HomeIcon,
-   UsersIcon,
+  HomeIcon,
+  UsersIcon,
   ChevronDown,
   ShieldCheckIcon,
 } from "lucide-react";
 
-import axios from "axios";
 import toast from "react-hot-toast";
- 
-
 
 const Navbar = () => {
-   const location = useLocation();
+  const location = useLocation();
   const isChatPage = location.pathname?.startsWith("/chat");
   const user = localStorage.getItem("user");
-   const [ userProfile,setUsers] = useState([]);
-
-   console.log(userProfile)
 
   const parsedUser = JSON.parse(user);
-   const firstLetter = parsedUser?.email?.charAt(0)?.toUpperCase() || "?";
-  
- 
- 
-   useEffect(() => {
-      const fetchOrgs = async () => {
-        const token = localStorage.getItem("token");
-        const user = localStorage.getItem("user");
-  
-        const parsedUser = JSON.parse(user);
-        if (!token) return;
-  
-        try {
-          console.log(12345555, parsedUser)
-   
-          const [res] = await Promise.all([ 
-                    api.post("/auth/userById", { orgId: parsedUser?.id || null } )
-                   ]);
- 
-           setUsers(res.data); 
-    
-   
-        } catch (err) {
-          console.error("Failed to fetch organizations:", err);
-        }
-      };
-  
-      fetchOrgs();
-    }, []);
-   
- 
+  const firstLetter = parsedUser?.email?.charAt(0)?.toUpperCase() || "?";
+
   const logout = async () => {
     try {
-     let log = await api.post("/auth/logout", {}, { withCredentials: true });
-       if (log.data.success) {   
-      window.location.href = "/login"; // redirect to login
-      toast(log.data.message)
+      let log = await api.post("/auth/logout", {}, { withCredentials: true });
+      if (log.data.success) {
+        window.location.href = "/login"; 
+        toast(log.data.message);
 
         localStorage.removeItem("token");
         localStorage.removeItem("user");
       }
-    } catch (err) {
-      console.error("Logout failed:", err);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
- 
- 
+
   return (
     <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-end w-full">
-<div className="flex items-center gap-3 p-2">
-  {/* Avatar */}
-    {parsedUser?.email}
+          <div className="flex items-center gap-3 p-2">
+             {parsedUser?.email}
 
-  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 
-                  text-white flex items-center justify-center text-lg font-semibold">
+            <div
+              className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 
+                  text-white flex items-center justify-center text-lg font-semibold"
+            >
+              {firstLetter}
+            </div>
 
-    {firstLetter}
-  </div>
-
-  {/* User Info */}
-  <div className="flex flex-col">
-    <h4 className="text-sm font-semibold text-gray-900">
-      {user?.name}
-    </h4>
-    <p className="text-xs text-gray-500">
-      {user?.email}
-    </p>
-  </div>
- 
-</div>
-  
+             <div className="flex flex-col">
+              <h4 className="text-sm font-semibold text-gray-900">
+                {user?.name}
+              </h4>
+              <p className="text-xs text-gray-500">{user?.email}</p>
+            </div>
+          </div>
 
           {isChatPage && (
             <div className="pl-5">
@@ -109,9 +69,7 @@ const Navbar = () => {
             </div>
           )}
 
-         
-          {/* Logout button */}
-          <button className="btn btn-ghost btn-circle"  onClick={logout}>
+           <button className="btn btn-ghost btn-circle" onClick={logout}>
             <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
           </button>
         </div>

@@ -4,46 +4,50 @@ import { useState } from "react";
 import HomePage from "./pages/HomePage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
- import Layout from "./components/Layout.jsx";
- import toast from "react-hot-toast";
+import Layout from "./components/Layout.jsx";
+import toast from "react-hot-toast";
 
 import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import { useThemeStore } from "./store/useThemeStore.js";
-import { api } from "./service/api.js"
+import { api } from "./service/api.js";
 const App = () => {
-  const { isLoading, user: authUser } = useAuthUser(); // renamed for clarity
+  const { loading, user: authUser } = useAuthUser(); // renamed for clarity
   const { theme } = useThemeStore();
- const user = localStorage.getItem("user");
+  const user = localStorage.getItem("user");
 
-      const parsedUser = JSON.parse(user);
+  const parsedUser = JSON.parse(user);
   const [selectedGroup, setSelectedGroup] = useState();
 
-  if (isLoading) return <PageLoader />;
+  if (loading) return <PageLoader />;
 
   const isAuthenticated = Boolean(authUser);
 
   const handleGroupClick = async (groupId) => {
     try {
-       const res = await api.post("/auth/orgUser", { orgId: parsedUser?.orgId || null } )
-        let filter = res?.data?.org[0]?.groups.filter((val)=> val.id ==groupId )
-       setSelectedGroup(filter[0]);  
-      toast(res.data.message)
-    } catch (err) {
-      console.error("Error fetching group:", err);
+      const res = await api.post("/auth/orgUser", {
+        orgId: parsedUser?.orgId || null,
+      });
+      let filter = res?.data?.org[0]?.groups.filter((val) => val.id == groupId);
+      setSelectedGroup(filter[0]);
+     } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
   return (
     <div className="h-screen" data-theme={theme}>
       <Routes>
-        {/* Home / Chat Page */}
-        <Route
+         <Route
           path="/"
           element={
             isAuthenticated ? (
-              <Layout showSidebar={true} sidebarProps={{ onGroupClick : handleGroupClick }}>
+              <Layout
+                showSidebar={true}
+                sidebarProps={{ onGroupClick: handleGroupClick }}
+              >
                 <HomePage groupi={selectedGroup} userId={authUser?.id} />
               </Layout>
             ) : (
@@ -51,22 +55,13 @@ const App = () => {
             )
           }
         />
- 
-
-        {/* Signup Page */}
-        <Route
+         <Route
           path="/signup"
-          element={
-            !isAuthenticated ? <SignUpPage /> : <Navigate to="/" />
-          }
+          element={!isAuthenticated ? <SignUpPage /> : <Navigate to="/" />}
         />
-
-        {/* Login Page */}
-        <Route
+         <Route
           path="/login"
-          element={
-            !isAuthenticated ? <LoginPage /> : <Navigate to="/" />
-          }
+          element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />}
         />
       </Routes>
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 // import useAuthUser from "../hooks/useAuthUser";
 import { api } from "../service/api";
 import toast from "react-hot-toast";
- 
+
 //  import {  ChevronDownIcon } from "@heroicons/react/24/solid";
 import {
   BellIcon,
@@ -14,45 +14,37 @@ import {
   ShieldCheckIcon,
 } from "lucide-react";
 
- 
 const Sidebar = ({ onGroupClick }) => {
   const [showOrgModal, setShowOrgModal] = useState(false);
-  const [showGroupModal, setShowGroupModal] = useState(false); 
-  const [userProfile, setUsers] = useState([]); 
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [userProfile, setUsers] = useState([]);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
- 
+
   const user = localStorage.getItem("user");
 
   const parsedUser = JSON.parse(user);
   const [orgName, setOrgName] = useState("");
-  const [groupName, setGroupName] = useState(""); 
+  const [groupName, setGroupName] = useState("");
   const [organizations, setOrganizations] = useState([]);
   const [groupss, setGroup] = useState([]);
 
-  const [orga, setOrga] = useState([]); 
+  const [orga, setOrga] = useState([]);
   const [activeGroupId, setActiveGroupId] = useState(null);
- 
+
   useEffect(() => {
     const fetchOrgs = async () => {
       const token = localStorage.getItem("token");
 
       if (!token) return;
       try {
-        
-      
-  toast.success("User added successfully");
-
-        const [user, orga, member, org, groupRes] = await Promise.all([
+        const [user, orga, org, groupRes] = await Promise.all([
           api.post("/auth/userById", {
             userId: parsedUser?.id || null,
           }),
           api.post("/groups/organizationById", {
             orgId: parsedUser?.orgId || null,
-          }),
-          api.post("/groups/groupMember", {
-            userId: parsedUser?.id || null,
           }),
           api.post("/auth/orgUser", {
             orgId: parsedUser?.orgId || null,
@@ -61,8 +53,8 @@ const Sidebar = ({ onGroupClick }) => {
             userId: parsedUser.id,
           }),
         ]);
-console.log(member)
-        setUsers(user.data);
+
+         setUsers(user.data);
         setOrga(orga.data.data);
         setOrganizations(org.data.org || []);
         setGroup(groupRes.data.data);
@@ -75,42 +67,59 @@ console.log(member)
   }, []);
 
   const handleCreateOrg = async () => {
-    const res = await api.post("/groups/createOrg", {
-      userId: parsedUser?.id || null,
-      name: orgName,
-    });
-  toast.success(res.data.message);
+    try {
+      const res = await api.post("/groups/createOrg", {
+        userId: parsedUser?.id || null,
+        name: orgName,
+      });
+      toast.success(res.data.message);
 
-    setOrgName("");
-    setShowOrgModal(false);
+      setOrgName("");
+      setShowOrgModal(false);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   const handleCreateGroup = async () => {
-    const res = await api.post("/groups/createGrp", {
-      userId: parsedUser?.id || null,
-      name: groupName,
-      orgId: userProfile?.org?.id || null,
-    });
-    setGroupName("");
-    setShowGroupModal(false);
-  toast.success(res.data.message);
+    try {
+      const res = await api.post("/groups/createGrp", {
+        userId: parsedUser?.id || null,
+        name: groupName,
+        orgId: userProfile?.org?.id || null,
+      });
+      setGroupName("");
+      setShowGroupModal(false);
+      window.location.href = "/"; // redirect to login
 
+      toast.success(res.data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   const handleGroupClick = (group) => {
-    setActiveGroupId(group);
-    onGroupClick(group);
+    try {
+      setActiveGroupId(group);
+      onGroupClick(group);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   const handleAddMember = async ({ userId, groupId }) => {
-    // return
-    let res = await api.post("/groups/addGrp-members",
-      { userId, groupId },
-    );
-    setSelectedUserId(null);
-    setSelectedGroupId(null);
-  toast.success(res.data.message);
-
+    try {
+      let res = await api.post("/groups/addGrp-members", { userId, groupId });
+       setSelectedUserId(null);
+      setSelectedGroupId(null);
+      toast.success(res.data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   return (
@@ -174,7 +183,7 @@ console.log(member)
           </div>
         </nav>
 
-         {parsedUser && parsedUser.role === "ADMIN" && (
+        {parsedUser && parsedUser.role === "ADMIN" && (
           <div className="px-4 py-2">
             <nav className="mb-4 space-y-1 border-b-2 border-gray-300">
               <Link

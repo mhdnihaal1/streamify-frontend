@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
-  import { Link, useNavigate } from "react-router"; 
-import {api } from "../service/api"
+import { Link, useNavigate } from "react-router";
+import { api } from "../service/api";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const SignUpPage = () => {
     fullName: "",
     email: "",
     password: "",
-    role: "MEMBER",
+    role: "ADMIN",
   });
 
   const [isPending, setIsPending] = useState(false);
@@ -18,25 +19,24 @@ const SignUpPage = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
     setIsPending(true);
     setError(null);
-console.log("Signup ", signupData);
     try {
-      const res = await api.post("/auth/register", signupData );
- 
- if(res.status === 200){
-       navigate("/login");
-}else{
-  // alert(res.data.message || "Signup failed");
-  setError(res.data.message || "Signup failed");
-}
-    } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      const res = await api.post("/auth/register", signupData);
+
+      if (res.status === 200) {
+        navigate("/login");
+      } else {
+         setError(res.data.message || "Signup failed");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
     } finally {
       setIsPending(false);
     }
   };
-
 
   return (
     <div
@@ -44,19 +44,15 @@ console.log("Signup ", signupData);
       data-theme="forest"
     >
       <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl bg-base-100 rounded-xl shadow-lg max-h-[95vh] overflow-hidden">
-        
-        {/* LEFT – FORM */}
-        <div className="w-full lg:w-1/2 p-6 sm:p-8 overflow-y-auto">
-          {/* LOGO */}
-          <div className="mb-4 flex items-center gap-2">
+         <div className="w-full lg:w-1/2 p-6 sm:p-8 overflow-y-auto">
+           <div className="mb-4 flex items-center gap-2">
             <ShipWheelIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
               Streamify
             </span>
           </div>
 
-          {/* ERROR */}
-          {error && (
+           {error && (
             <div className="alert alert-error mb-4">
               <span>{error.response?.data?.message}</span>
             </div>
@@ -70,8 +66,7 @@ console.log("Signup ", signupData);
               </p>
             </div>
 
-            {/* FULL NAME */}
-            <div className="form-control">
+             <div className="form-control">
               <label className="label">
                 <span className="label-text">Full Name</span>
               </label>
@@ -87,8 +82,7 @@ console.log("Signup ", signupData);
               />
             </div>
 
-            {/* EMAIL */}
-            <div className="form-control">
+             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
               </label>
@@ -104,13 +98,12 @@ console.log("Signup ", signupData);
               />
             </div>
 
-            {/* ROLE */}
-            <div className="form-control">
+             <div className="form-control">
               <label className="label">
                 <span className="label-text">Role</span>
               </label>
               <div className="flex gap-2">
-                <button
+                {/* <button
                   type="button"
                   className={`btn w-1/2 ${
                     signupData.role === "MEMBER"
@@ -122,13 +115,11 @@ console.log("Signup ", signupData);
                   }
                 >
                   MEMBER
-                </button>
+                </button> */}
                 <button
                   type="button"
                   className={`btn w-1/2 ${
-                    signupData.role === "ADMIN"
-                      ? "btn-primary"
-                      : "btn-outline"
+                    signupData.role === "ADMIN" ? "btn-primary" : "btn-outline"
                   }`}
                   onClick={() =>
                     setSignupData({ ...signupData, role: "ADMIN" })
@@ -139,8 +130,7 @@ console.log("Signup ", signupData);
               </div>
             </div>
 
-            {/* PASSWORD */}
-            <div className="form-control">
+             <div className="form-control">
               <label className="label">
                 <span className="label-text">Password</span>
               </label>
@@ -159,8 +149,7 @@ console.log("Signup ", signupData);
               </p>
             </div>
 
-            {/* SUBMIT */}
-            <button className="btn btn-primary w-full" type="submit">
+             <button className="btn btn-primary w-full" type="submit">
               {isPending ? (
                 <>
                   <span className="loading loading-spinner loading-xs"></span>
@@ -171,8 +160,7 @@ console.log("Signup ", signupData);
               )}
             </button>
 
-            {/* LOGIN */}
-            <p className="text-sm text-center">
+             <p className="text-sm text-center">
               Already have an account?{" "}
               <Link to="/login" className="text-primary hover:underline">
                 Sign in
@@ -181,8 +169,7 @@ console.log("Signup ", signupData);
           </form>
         </div>
 
-        {/* RIGHT – IMAGE */}
-        <div className="hidden lg:flex w-1/2 bg-primary/10 items-center justify-center p-8">
+         <div className="hidden lg:flex w-1/2 bg-primary/10 items-center justify-center p-8">
           <div className="max-w-sm text-center">
             <img src="/i.png" alt="illustration" className="w-full mb-6" />
             <h2 className="text-xl font-semibold">
@@ -193,11 +180,9 @@ console.log("Signup ", signupData);
             </p>
           </div>
         </div>
-
       </div>
     </div>
   );
 };
 
 export default SignUpPage;
-  

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+//  import toast from "react-hot-toast";
 
-const API_URL = "https://streamify-backend-9m71.onrender.com/api/auth/me";
+const API_URL = "http://localhost:3000/api/auth/me";
 
 const useAuthUser = () => {
   const [user, setUser] = useState(null);
@@ -13,11 +14,10 @@ const useAuthUser = () => {
       try {
         const res = await axios.get(API_URL, {
           withCredentials: true,
-            headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-   // important for cookies / session
-        });
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+         });
 
         setUser(res.data.user);
       } catch (err) {

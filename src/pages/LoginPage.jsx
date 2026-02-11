@@ -1,28 +1,30 @@
 import { useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
- import { Link } from "react-router"; 
- import toast from "react-hot-toast";
- import {api } from "../service/api"
- 
+import { Link } from "react-router";
+import toast from "react-hot-toast";
+import { api } from "../service/api";
+
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-  
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    const res = await api.post("/auth/login", loginData );
+    try {
+      const res = await api.post("/auth/login", loginData);
+      if (res.data.Success) {
+        window.location.href = "/";
+      }
+      localStorage.setItem("token", res.data.token);
 
-    if (res.data.Success) {
-      window.location.href = "/";  
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
     }
-  toast(res.data.message)
-     localStorage.setItem("token", res.data.token);
-
-     localStorage.setItem("user", JSON.stringify(res.data.user));
   };
-  
 
   return (
     <div
@@ -39,8 +41,6 @@ const LoginPage = () => {
               Streamify
             </span>
           </div>
-
-         
 
           <div className="w-full">
             <form onSubmit={handleLogin}>
@@ -62,7 +62,9 @@ const LoginPage = () => {
                       placeholder="hello@example.com"
                       className="input input-bordered w-full"
                       value={loginData.email}
-                      onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                      onChange={(e) =>
+                        setLoginData({ ...loginData, email: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -76,21 +78,24 @@ const LoginPage = () => {
                       placeholder="••••••••"
                       className="input input-bordered w-full"
                       value={loginData.password}
-                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                      onChange={(e) =>
+                        setLoginData({ ...loginData, password: e.target.value })
+                      }
                       required
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-full"  >
-                    
-                      Sign In
-                    
+                  <button type="submit" className="btn btn-primary w-full">
+                    Sign In
                   </button>
 
                   <div className="text-center mt-4">
                     <p className="text-sm">
                       Don't have an account?{" "}
-                      <Link to="/signup" className="text-primary hover:underline">
+                      <Link
+                        to="/signup"
+                        className="text-primary hover:underline"
+                      >
                         Create one
                       </Link>
                     </p>
@@ -106,13 +111,20 @@ const LoginPage = () => {
           <div className="max-w-md p-8">
             {/* Illustration */}
             <div className="relative aspect-square max-w-sm mx-auto">
-              <img src="/i.png" alt="Language connection illustration" className="w-full h-full" />
+              <img
+                src="/i.png"
+                alt="Language connection illustration"
+                className="w-full h-full"
+              />
             </div>
 
             <div className="text-center space-y-3 mt-6">
-              <h2 className="text-xl font-semibold">Connect with language partners worldwide</h2>
+              <h2 className="text-xl font-semibold">
+                Connect with language partners worldwide
+              </h2>
               <p className="opacity-70">
-                Practice conversations, make friends, and improve your language skills together
+                Practice conversations, make friends, and improve your language
+                skills together
               </p>
             </div>
           </div>

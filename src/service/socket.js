@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 
-export const socket = io("https://streamify-backend-9m71.onrender.com", {
+export const socket = io("http://localhost:3000", {
   auth: {
     userId: JSON.parse(localStorage.getItem("user"))?.id
   }
